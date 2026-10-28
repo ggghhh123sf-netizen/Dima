@@ -1,180 +1,311 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dima messenger</title>
+<title>Dima Messenger</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;font:16px Arial;background:#dce6ed;color:#17212b}
-.app{max-width:800px;height:100dvh;margin:auto;background:white;display:flex;flex-direction:column}
-header{background:#527da3;color:white;padding:16px;font-size:21px;font-weight:bold}
-#auth{padding:20px}
-input,button{font:inherit;padding:12px;border-radius:9px}
-input{border:1px solid #bbb;width:100%;margin:7px 0}
-button{border:0;background:#527da3;color:white;cursor:pointer;margin:5px 0}
-#chat{display:none;flex:1;min-height:0;flex-direction:column}
-#messages{flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
-.msg{background:#eee;padding:10px;border-radius:12px;max-width:85%;overflow-wrap:anywhere}
-.mine{background:#d7f5d7;align-self:flex-end}
-.who{font-size:12px;color:#527da3;font-weight:bold}
-.time{font-size:11px;color:#777;text-align:right;margin-top:5px}
-#sendform{display:flex;padding:8px;gap:5px}
-#text{flex:1;min-width:0}
-#status{font-size:13px;color:#b33;white-space:pre-wrap}
+body{margin:0;background:#101827;color:#fff;font-family:Arial,sans-serif}
+main{max-width:700px;margin:auto;padding:16px}
+h2{margin-top:0}
+.panel{background:#1d293b;padding:14px;border-radius:14px;margin-bottom:12px}
+input,button{padding:12px;border:0;border-radius:9px;font-size:15px}
+input{background:#29374c;color:white;min-width:0}
+button{background:#3984ff;color:white;cursor:pointer}
+.auth{display:flex;flex-wrap:wrap;gap:8px}
+.auth input{flex:1}
+#chat{display:none}
+#messages{height:45vh;min-height:220px;overflow:auto}
+.msg{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid #344156}
+.avatar{font-size:30px;min-width:40px;text-align:center}
+.name{font-weight:bold;color:#85b7ff}
+.time{font-size:11px;color:#9ca9bb}
+.text{overflow-wrap:anywhere;margin-top:5px}
+#people{display:flex;flex-wrap:wrap;gap:8px}
+.person{background:#29374c;border-radius:10px;padding:8px;font-size:13px}
+.online{color:#55e69a}
+.offline{color:#9ca9bb}
+#emojis button{font-size:23px;background:#29374c;padding:7px}
+#emojis{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.send{display:flex;gap:8px;margin-top:10px}
+.send input{flex:1;width:50%}
+small{color:#aab6c8}
 </style>
 </head>
 <body>
-<div class="app">
-<header>✉ Dima messenger <button id="logout" style="float:right;display:none">Выйти</button></header>
+<main>
+<h2>💬 Dima Messenger</h2>
 
-<section id="auth">
-<h2 id="heading">Вход</h2>
-<form id="authform">
-<input id="name" placeholder="Твоё имя" maxlength="32" style="display:none">
-<input id="email" type="email" placeholder="Электронная почта" required>
-<input id="password" type="password" placeholder="Пароль (минимум 6 символов)" minlength="6" required>
-<button id="submit" type="submit">Войти</button>
-</form>
-<button id="switch">Создать аккаунт</button>
-<p id="status"></p>
-</section>
-
-<section id="chat">
-<div id="messages">Загрузка сообщений…</div>
-<form id="sendform">
-<input id="text" placeholder="Сообщение…" maxlength="1000" required>
-<button type="submit">➤</button>
-</form>
-</section>
+<div class="panel" id="auth">
+  <p>Войди или создай аккаунт</p>
+  <div class="auth">
+    <input id="email" type="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Пароль">
+  </div>
+  <div class="auth" style="margin-top:8px">
+    <button id="login">Войти</button>
+    <button id="register">Регистрация</button>
+  </div>
+  <p id="error"></p>
 </div>
 
+<div id="chat">
+  <div class="panel">
+    <div>Ты: <b id="myname"></b></div>
+    <div>Твоя аватарка: <span id="myavatar">😀</span></div>
+    <div id="emojis"></div>
+    <input id="newname" maxlength="30" placeholder="Твоё имя">
+    <button id="saveprofile">Сохранить имя</button>
+    <button id="logout" style="background:#d94b58">Выйти</button>
+  </div>
+
+  <div class="panel">
+    <b>🟢 Сейчас в сети</b>
+    <div id="people" style="margin-top:10px"></div>
+  </div>
+
+  <div class="panel">
+    <b>Сообщения</b>
+    <div id="messages"></div>
+    <div class="send">
+      <input id="message" maxlength="1000" placeholder="Напиши сообщение...">
+      <button id="send">Отправить</button>
+    </div>
+  </div>
+</div>
+</main>
+
 <script type="module">
-import {initializeApp} from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
 import {
- getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,
- onAuthStateChanged,signOut,updateProfile
+  getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+  onAuthStateChanged, signOut
 } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
 import {
- getFirestore,collection,addDoc,query,orderBy,limit,onSnapshot,serverTimestamp
+  getFirestore, collection, addDoc, query, orderBy, limit,
+  onSnapshot, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+import {
+  getDatabase, ref, set, onValue, onDisconnect, serverTimestamp as rtdbTimestamp
+} from "https://www.gstatic.com/firebasejs/13.1.0/firebase-database.js";
 
-const firebaseConfig={
- apiKey:"AIzaSyDpm_WzeaUue17urrQptihWbQQtWEOBp3U",
- authDomain:"dima-messenger.firebaseapp.com",
- projectId:"dima-messenger",
- storageBucket:"dima-messenger.firebasestorage.app",
- messagingSenderId:"205525066127",
- appId:"1:205525066127:web:b44470d06e4e5ccb21abfa",
- measurementId:"G-8HP9CRT76R"
+const firebaseConfig = {
+  apiKey: "AIzaSyDpm_WzeaUue17urrQptihWbQQtWEOBp3U",
+  authDomain: "dima-messenger.firebaseapp.com",
+  projectId: "dima-messenger",
+  storageBucket: "dima-messenger.firebasestorage.app",
+  messagingSenderId: "205525066127",
+  appId: "1:205525066127:web:b44470d06e4e5ccb21abfa",
+  measurementId: "G-8HP9CRT76R",
+  databaseURL: "https://dima-messenger-default-rtdb.firebaseio.com"
 };
 
-const app=initializeApp(firebaseConfig);
-const auth=getAuth(app);
-const db=getFirestore(app);
-const $=id=>document.getElementById(id);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const realtime = getDatabase(app);
 
-let register=false;
-let stopChat=null;
+const $ = id => document.getElementById(id);
+const emojis = ["😀","😎","🐱","🐸","👻","🤖","🎮","⭐","🔥","🦊","🐼","💀"];
+let user = null;
+let myProfile = {name:"", avatar:"😀"};
+let profiles = {};
+let statuses = {};
+let stopMessages = null;
+let stopProfiles = null;
+let stopStatuses = null;
+let presenceRef = null;
+let presenceConnectionListener = null;
 
-$("switch").onclick=()=>{
- register=!register;
- $("heading").textContent=register?"Регистрация":"Вход";
- $("name").style.display=register?"block":"none";
- $("submit").textContent=register?"Зарегистрироваться":"Войти";
- $("switch").textContent=register?"Уже есть аккаунт? Войти":"Создать аккаунт";
- $("status").textContent="";
-};
+$("emojis").innerHTML = emojis.map(e =>
+  `<button type="button" data-emoji="${e}">${e}</button>`
+).join("");
 
-$("authform").onsubmit=async e=>{
- e.preventDefault();
- $("status").textContent="";
- $("submit").disabled=true;
- try{
-  const email=$("email").value.trim();
-  const password=$("password").value;
-  if(register){
-   const name=$("name").value.trim();
-   if(!name)throw Error("Напиши своё имя.");
-   const result=await createUserWithEmailAndPassword(auth,email,password);
-   await updateProfile(result.user,{displayName:name});
-  }else{
-   await signInWithEmailAndPassword(auth,email,password);
+$("emojis").addEventListener("click", async e => {
+  const avatar = e.target.dataset.emoji;
+  if (!avatar || !user) return;
+  myProfile.avatar = avatar;
+  $("myavatar").textContent = avatar;
+  try {
+    await set(ref(realtime, "profiles/" + user.uid), myProfile);
+  } catch(err) {
+    $("error").textContent = "Не удалось сохранить аватарку: " + err.message;
   }
- }catch(err){
-  const errors={
-   "auth/email-already-in-use":"Эта почта уже зарегистрирована.",
-   "auth/invalid-email":"Проверь адрес почты.",
-   "auth/weak-password":"Пароль должен быть не короче 6 символов.",
-   "auth/invalid-credential":"Неверная почта или пароль.",
-   "auth/network-request-failed":"Проверь интернет."
-  };
-  $("status").textContent=errors[err.code]||err.message;
- }finally{
-  $("submit").disabled=false;
- }
-};
-
-$("logout").onclick=()=>signOut(auth);
-
-function showMessages(snapshot,user){
- const box=$("messages");
- const nearBottom=box.scrollHeight-box.scrollTop-box.clientHeight<100;
- box.replaceChildren();
- if(snapshot.empty){
-  box.textContent="Сообщений пока нет. Напиши первым!";
-  return;
- }
- snapshot.forEach(doc=>{
-  const m=doc.data();
-  const item=document.createElement("div");
-  item.className="msg"+(m.uid===user.uid?" mine":"");
-  const who=document.createElement("div");
-  who.className="who";
-  who.textContent=m.uid===user.uid?"Ты":(m.name||"Пользователь");
-  const body=document.createElement("div");
-  body.textContent=m.text||"";
-  const time=document.createElement("div");
-  time.className="time";
-  time.textContent=m.createdAt?.toDate
-   ?m.createdAt.toDate().toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"})
-   :"сейчас";
-  item.append(who,body,time);
-  box.append(item);
- });
- if(nearBottom)box.scrollTop=box.scrollHeight;
-}
-
-onAuthStateChanged(auth,user=>{
- if(stopChat){stopChat();stopChat=null}
- $("auth").style.display=user?"none":"block";
- $("chat").style.display=user?"flex":"none";
- $("logout").style.display=user?"inline-block":"none";
- if(!user)return;
-
- const q=query(collection(db,"messages"),orderBy("createdAt","asc"),limit(200));
- stopChat=onSnapshot(q,snapshot=>showMessages(snapshot,user),err=>{
-  $("messages").textContent="Ошибка базы: "+err.message;
- });
 });
 
-$("sendform").onsubmit=async e=>{
- e.preventDefault();
- const user=auth.currentUser;
- const text=$("text").value.trim();
- if(!user||!text)return;
- try{
-  await addDoc(collection(db,"messages"),{
-   text:text,
-   uid:user.uid,
-   name:user.displayName||user.email,
-   createdAt:serverTimestamp()
-  });
-  $("text").value="";
- }catch(err){
-  alert("Не удалось отправить сообщение: "+err.message);
- }
+$("register").onclick = async () => {
+  $("error").textContent = "";
+  try {
+    await createUserWithEmailAndPassword(auth, $("email").value.trim(), $("password").value);
+  } catch(e) { $("error").textContent = e.message; }
 };
+
+$("login").onclick = async () => {
+  $("error").textContent = "";
+  try {
+    await signInWithEmailAndPassword(auth, $("email").value.trim(), $("password").value);
+  } catch(e) { $("error").textContent = e.message; }
+};
+
+$("logout").onclick = () => signOut(auth);
+
+$("saveprofile").onclick = async () => {
+  if (!user) return;
+  const name = $("newname").value.trim().slice(0,30);
+  if (!name) return;
+  myProfile.name = name;
+  try {
+    await set(ref(realtime, "profiles/" + user.uid), myProfile);
+    $("myname").textContent = name;
+  } catch(e) {
+    $("error").textContent = "Не удалось сохранить имя: " + e.message;
+  }
+};
+
+onAuthStateChanged(auth, async currentUser => {
+  user = currentUser;
+  $("auth").style.display = user ? "none" : "block";
+  $("chat").style.display = user ? "block" : "none";
+  $("error").textContent = "";
+
+  if (stopMessages) stopMessages();
+  if (stopProfiles) stopProfiles();
+  if (stopStatuses) stopStatuses();
+  if (presenceConnectionListener) {
+    // Снимем обработчик соединения при выходе.
+    presenceConnectionListener();
+    presenceConnectionListener = null;
+  }
+
+  if (!user) {
+    $("messages").innerHTML = "";
+    $("people").innerHTML = "";
+    return;
+  }
+
+  try {
+    const profileRef = ref(realtime, "profiles/" + user.uid);
+    const { get } = await import("https://www.gstatic.com/firebasejs/13.1.0/firebase-database.js");
+    const profileSnapshot = await get(profileRef);
+    myProfile = profileSnapshot.exists()
+      ? {...{name:"",avatar:"😀"}, ...profileSnapshot.val()}
+      : {name: user.email.split("@")[0], avatar:"😀"};
+
+    await set(profileRef, myProfile);
+    $("myname").textContent = myProfile.name;
+    $("myavatar").textContent = myProfile.avatar;
+    $("newname").value = myProfile.name;
+
+    stopProfiles = onValue(ref(realtime, "profiles"), snapshot => {
+      profiles = snapshot.val() || {};
+      renderPeople();
+      renderMessagesCache();
+    });
+
+    stopStatuses = onValue(ref(realtime, "status"), snapshot => {
+      statuses = snapshot.val() || {};
+      renderPeople();
+    });
+
+    presenceRef = ref(realtime, "status/" + user.uid);
+
+    presenceConnectionListener = onValue(ref(realtime, ".info/connected"), async snapshot => {
+      if (snapshot.val() !== true || !user) return;
+      try {
+        await onDisconnect(presenceRef).set({
+          state:"offline",
+          last_changed:rtdbTimestamp()
+        });
+        await set(presenceRef, {
+          state:"online",
+          last_changed:rtdbTimestamp()
+        });
+      } catch(e) {
+        $("error").textContent = "Ошибка статуса сети: " + e.message;
+      }
+    });
+
+    const q = query(collection(db, "messages"), orderBy("createdAt", "asc"), limit(200));
+    stopMessages = onSnapshot(q, snapshot => {
+      const messages = snapshot.docs.map(doc => ({id:doc.id, ...doc.data()}));
+      renderMessages(messages);
+    }, e => {
+      $("error").textContent = "Ошибка сообщений: " + e.message;
+    });
+
+  } catch(e) {
+    $("error").textContent = "Ошибка подключения: " + e.message;
+  }
+});
+
+let cachedMessages = [];
+
+function renderMessagesCache() {
+  if (cachedMessages.length) renderMessages(cachedMessages);
+}
+
+function renderMessages(messages) {
+  cachedMessages = messages;
+  $("messages").innerHTML = messages.map(m => {
+    const p = profiles[m.uid] || {name:m.name || "Пользователь",avatar:"😀"};
+    const time = m.createdAt?.toDate
+      ? m.createdAt.toDate().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})
+      : "";
+    return `<div class="msg">
+      <div class="avatar">${safe(p.avatar || "😀")}</div>
+      <div>
+        <div><span class="name">${safe(p.name || m.name || "Пользователь")}</span>
+        <span class="time">${time}</span></div>
+        <div class="text">${safe(m.text || "")}</div>
+      </div>
+    </div>`;
+  }).join("");
+  $("messages").scrollTop = $("messages").scrollHeight;
+}
+
+function renderPeople() {
+  const online = Object.entries(statuses).filter(([uid,s]) =>
+    s?.state === "online"
+  );
+  $("people").innerHTML = online.length ? online.map(([uid]) => {
+    const p = profiles[uid] || {name:"Пользователь",avatar:"😀"};
+    return `<div class="person"><span class="online">●</span>
+      ${safe(p.avatar || "😀")} ${safe(p.name || "Пользователь")}
+      ${uid === user?.uid ? "(ты)" : ""}</div>`;
+  }).join("") : "<small>Пока никого нет в сети</small>";
+}
+
+function safe(value) {
+  return String(value).replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+
+async function sendMessage() {
+  const text = $("message").value.trim();
+  if (!text || !user) return;
+  $("send").disabled = true;
+  try {
+    await addDoc(collection(db, "messages"), {
+      text,
+      uid: user.uid,
+      name: myProfile.name || user.email.split("@")[0],
+      createdAt: serverTimestamp()
+    });
+    $("message").value = "";
+  } catch(e) {
+    $("error").textContent = "Не удалось отправить сообщение: " + e.message;
+  } finally {
+    $("send").disabled = false;
+  }
+}
+
+$("send").onclick = sendMessage;
+$("message").addEventListener("keydown", e => {
+  if (e.key === "Enter") sendMessage();
+});
 </script>
 </body>
 </html>
