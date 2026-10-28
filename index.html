@@ -568,7 +568,59 @@ onAuthStateChanged(auth, async currentUser => {
       limit(200)
     );
 
-    stopMessages = onSnapshot(q,snapshot => {
-      cachedMessages = snapshot.docs.map(d => ({id:d.id,...d.data()}));
+        stopMessages = onSnapshot(q, snapshot => {
+      if (generation !== authGeneration) return;
+
+      cachedMessages = snapshot.docs.map(d => ({
+        id: d.id,
+        ...d.data()
+      }));
+
       renderMessages();
-    }, e => showError("Ошибка сообще
+    }, e => showError("Ошибка сообщений: " + e.message));
+
+  } catch (e) {
+    if (generation === authGeneration) {
+      showError("Ошибка запуска чата: " + e.message);
+    }
+  }
+});
+
+// Отправка сообщений.
+$("composer").addEventListener("submit", async e => {
+  e.preventDefault();
+
+  if (!user) {
+    showError("Сначала войди в аккаунт.");
+    return;
+  }
+
+  const text = $("message").value.trim();
+  if (!text) return;
+
+  $("send").disabled = true;
+
+  try {
+    await addDoc(collection(db, "messages"), {
+      text,
+      uid: user.uid,
+      name: myProfile.name || user.email || "Пользователь",
+      createdAt: serverTimestamp()
+    });
+
+    $("message").value = "";
+    if (myTypingRef) {
+      await remove(myTypingRef);
+    }
+
+    clearError();
+  } catch (e) {
+    showError("Не удалось отправить сообщение: " + e.message);
+  } finally {
+    $("send").disabled = false;
+    $("message").focus();
+  }
+});
+</script>
+</body>
+</html>
