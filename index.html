@@ -157,3 +157,191 @@ onAuthStateChanged(auth,async current=>{
 </script>
 </body>
 </html>
+
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
+import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
+import{getFirestore,collection,addDoc,query,orderBy,limit,onSnapshot,serverTimestamp,deleteDoc,doc}from"https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+import{getDatabase,ref,set,get,onValue,onDisconnect,remove,serverTimestamp as rtdbTimestamp}from"https://www.gstatic.com/firebasejs/13.1.0/firebase-database.js";
+
+const firebaseConfig={
+ apiKey:"AIzaSyDpm_WzeaUue17urrQptihWbQQtWEOBp3U",
+ authDomain:"dima-messenger.firebaseapp.com",
+ projectId:"dima-messenger",
+ storageBucket:"dima-messenger.firebasestorage.app",
+ messagingSenderId:"205525066127",
+ appId:"1:205525066127:web:b44470d06e4e5ccb21abfa",
+ measurementId:"G-8HP9CRT76R",
+ databaseURL:"https://dima-messenger-default-rtdb.firebaseio.com"
+};
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),realtime=getDatabase(app);
+const $=id=>document.getElementById(id);
+const emojiList=["😀","😎","🐱","🐸","👻","🤖","🎮","⭐","🔥","🦊","🐼","💀","🐺","🦄","🚀","🍀"];
+let user=null,myProfile={name:"",avatar:"😀"},profiles={},statuses={},typingUsers={},cachedMessages=[];
+let stops=[],myTypingRef=null,typingTimer=null,authGeneration=0;
+
+function showError(s){$("error").textContent=s;$("error").style.display="block"}
+function clearError(){$("error").textContent="";$("error").style.display="none"}
+function safe(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function stopListeners(){stops.forEach(fn=>fn());stops=[];clearTimeout(typingTimer);if(myTypingRef)remove(myTypingRef).catch(()=>{});myTypingRef=null;typingUsers={}}
+
+function renderTyping(){
+ const names=Object.entries(typingUsers).filter(([id,d])=>id!==user?.uid&&d?.typing&&Date.now()-(d.updatedAt||0)<6000).map(([id])=>profiles[id]?.name||"Кто-то");
+ $("typing").textContent=names.length?names.join(", ")+(names.length===1?" печатает…":" печатают…"):"";
+ $("typing").style.display=names.length?"block":"none";
+}
+function setTyping(active){if(!user||!myTypingRef)return;set(myTypingRef,{typing:active,updatedAt:Date.now()}).catch(e=>console.error(e))}
+
+function renderPeople(){
+ const people=Object.entries(profiles).sort((a,b)=>(statuses[a[0]]?.state==="online"?0:1)-(statuses[b[0]]?.state==="online"?0:1));
+ $("people").innerHTML=people.length?people.map(([id,p])=>`<div class="person"><div class="avatar">${safe(p.avatar||"😀")}</div><div class="person-info"><div class="person-name">${safe(p.name||"Пользователь")}${id===user?.uid?" (ты)":""}</div><div class="person-state ${statuses[id]?.state==="online"?"":"offline"}">${statuses[id]?.state==="online"?"● В сети":"○ Не в сети"}</div></div></div>`).join(""):'<div class="muted">Пока нет пользователей</div>';
+}
+
+function renderMessages(){
+ const box=$("messages"),near=box.scrollHeight-box.scrollTop-box.clientHeight<100;
+ if(!cachedMessages.length){box.innerHTML='<div class="empty">✨ Здесь пока тихо.<br>Отправь первое сообщение!</div>';return}
+ box.innerHTML=cachedMessages.map(m=>{
+  const mine=m.uid===user?.uid,p=profiles[m.uid]||{name:m.name||"Пользователь",avatar:"😀"};
+  const time=m.createdAt?.toDate?m.createdAt.toDate().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}):"";
+  return `<div class="msg ${mine?"mine":""}"><div class="avatar">${safe(p.avatar||"😀")}</div><div class="msg-content"><div class="msg-meta"><span class="msg-name">${safe(p.name||m.name||"Пользователь")}</span><span>${safe(time)}</span></div><div class="bubble">${safe(m.text||"")}</div><button type="button" class="delete-message" data-delete="${safe(m.id)}">🗑️ Удалить</button></div></div>`;
+ }).join("");
+ if(near)box.scrollTop=box.scrollHeight;
+}
+
+$("emojis").innerHTML=emojiList.map(e=>`<button type="button" data-emoji="${e}">${e}</button>`).join("");
+$("emojis").addEventListener("click",async e=>{
+ const a=e.target.dataset.emoji;if(!a||!user)return;
+ myProfile={...myProfile,avatar:a};$("myavatar").textContent=a;
+ try{await set(ref(realtime,"profiles/"+user.uid),myProfile);clearError()}
+ catch(x){showError("Ошибка аватарки: "+x.message)}
+});
+
+$("register").onclick=async()=>{
+ clearError();
+ try{await createUserWithEmailAndPassword(auth,$("email").value.trim(),$("password").value)}
+ catch(e){showError("Регистрация: "+e.message)}
+};
+$("login").onclick=async()=>{
+ clearError();
+ try{await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value)}
+ catch(e){showError("Вход: "+e.message)}
+};
+$("password").addEventListener("keydown",e=>{if(e.key==="Enter")$("login").click()});
+
+$("saveprofile").onclick=async()=>{
+ if(!user)return;
+ const name=$("newname").value.trim().slice(0,30);
+ if(!name){showError("Введи имя.");return}
+ myProfile={...myProfile,name};$("myname").textContent=name;
+ try{await set(ref(realtime,"profiles/"+user.uid),myProfile);clearError()}
+ catch(e){showError("Ошибка профиля: "+e.message)}
+};
+
+$("logout").onclick=async()=>{
+ try{
+  if(user){
+   await remove(ref(realtime,"typing/"+user.uid));
+   await set(ref(realtime,"status/"+user.uid),{state:"offline",last_changed:rtdbTimestamp()});
+  }
+  await signOut(auth);
+ }catch(e){showError("Ошибка выхода: "+e.message)}
+};
+
+$("message").addEventListener("input",()=>{
+ if(!user||!myTypingRef)return;
+ clearTimeout(typingTimer);
+ const active=!!$("message").value.trim();setTyping(active);
+ if(active)typingTimer=setTimeout(()=>setTyping(false),2500);
+});
+
+// Удаление любого сообщения общего чата.
+$("messages").addEventListener("click",async e=>{
+ const button=e.target.closest("[data-delete]");
+ if(!button||!user)return;
+ if(!confirm("Удалить это сообщение у всех участников общего чата?"))return;
+ button.disabled=true;
+ try{
+  await deleteDoc(doc(db,"messages",button.dataset.delete));
+  clearError();
+ }catch(err){
+  showError("Не удалось удалить сообщение: "+err.message);
+  button.disabled=false;
+ }
+});
+
+// Отправка сообщений.
+$("composer").addEventListener("submit",async e=>{
+ e.preventDefault();
+ if(!user){showError("Сначала войди.");return}
+ const text=$("message").value.trim();if(!text)return;
+ $("send").disabled=true;
+ try{
+  await addDoc(collection(db,"messages"),{
+   text,uid:user.uid,
+   name:myProfile.name||user.email||"Пользователь",
+   createdAt:serverTimestamp()
+  });
+  $("message").value="";setTyping(false);clearError();
+ }catch(err){showError("Не удалось отправить сообщение: "+err.message)}
+ finally{$("send").disabled=false;$("message").focus()}
+});
+
+onAuthStateChanged(auth,async current=>{
+ const gen=++authGeneration;
+ stopListeners();user=current;cachedMessages=[];profiles={};statuses={};
+ $("auth").style.display=user?"none":"block";
+ $("chat").style.display=user?"block":"none";
+ $("messages").innerHTML="";$("people").innerHTML="";clearError();
+ if(!user)return;
+
+ try{
+  const uid=user.uid,pr=ref(realtime,"profiles/"+uid),snap=await get(pr);
+  if(gen!==authGeneration)return;
+  myProfile=snap.exists()?{name:"",avatar:"😀",...snap.val()}:{name:user.email?.split("@")[0]||"Пользователь",avatar:"😀"};
+  await set(pr,myProfile);
+  if(gen!==authGeneration)return;
+
+  $("myname").textContent=myProfile.name;
+  $("myavatar").textContent=myProfile.avatar||"😀";
+  $("newname").value=myProfile.name||"";
+
+  stops.push(onValue(ref(realtime,"profiles"),s=>{
+   profiles=s.val()||{};renderPeople();renderMessages();renderTyping();
+  },e=>showError("Ошибка профилей: "+e.message)));
+
+  stops.push(onValue(ref(realtime,"status"),s=>{
+   statuses=s.val()||{};renderPeople();
+  },e=>showError("Ошибка статусов: "+e.message)));
+
+  const presence=ref(realtime,"status/"+uid);
+  stops.push(onValue(ref(realtime,".info/connected"),async s=>{
+   if(s.val()!==true||gen!==authGeneration||!user)return;
+   try{
+    await onDisconnect(presence).set({state:"offline",last_changed:rtdbTimestamp()});
+    if(gen!==authGeneration)return;
+    await set(presence,{state:"online",last_changed:rtdbTimestamp()});
+   }catch(e){showError("Ошибка статуса: "+e.message)}
+  }));
+
+  myTypingRef=ref(realtime,"typing/"+uid);
+  await onDisconnect(myTypingRef).remove();
+
+  stops.push(onValue(ref(realtime,"typing"),s=>{
+   if(gen!==authGeneration)return;
+   typingUsers=s.val()||{};renderTyping();
+  },e=>showError("Ошибка печати: "+e.message)));
+
+  const q=query(collection(db,"messages"),orderBy("createdAt","asc"),limit(200));
+  stops.push(onSnapshot(q,s=>{
+   if(gen!==authGeneration)return;
+   cachedMessages=s.docs.map(d=>({id:d.id,...d.data()}));
+   renderMessages();
+  },e=>showError("Ошибка сообщений: "+e.message)));
+
+ }catch(e){
+  if(gen===authGeneration)showError("Ошибка запуска чата: "+e.message);
+ }
+});
+</script>
+</body>
+</html>
