@@ -571,4 +571,4 @@ onAuthStateChanged(auth, async currentUser => {
     stopMessages = onSnapshot(q,snapshot => {
       cachedMessages = snapshot.docs.map(d => ({id:d.id,...d.data()}));
       renderMessages();
-    },e => showError("Ошибка сообщения")
+    }, e => showError("Ошибка сообщения: " + e.message));
