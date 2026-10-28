@@ -1,0 +1,42 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Мой чат</title>
+<style>
+body{margin:0;background:#101820;color:white;font-family:Arial}
+header{padding:20px;background:#172632;font-size:24px;font-weight:bold}
+#messages{height:75vh;overflow:auto;padding:12px}
+.msg{background:#23483e;padding:12px;margin:10px 0;border-radius:14px;overflow-wrap:anywhere}
+form{display:flex;gap:8px;padding:10px;background:#172632}
+input{flex:1;min-width:0;padding:12px;border-radius:10px;border:0;font-size:16px}
+button{background:#35c99a;border:0;border-radius:10px;padding:12px;font-weight:bold}
+</style>
+</head>
+<body>
+<header>✉ Мой чат</header>
+<div id="messages"><p>Добро пожаловать!</p></div>
+<form id="form">
+<input id="msg" placeholder="Напиши сообщение..." autocomplete="off">
+<button>Отправить</button>
+</form>
+<script>
+const form=document.querySelector("#form");
+const input=document.querySelector("#msg");
+const messages=document.querySelector("#messages");
+form.addEventListener("submit",e=>{
+e.preventDefault();
+const text=input.value.trim();
+if(!text)return;
+const item=document.createElement("div");
+item.className="msg";
+item.textContent=text;
+messages.appendChild(item);
+input.value="";
+messages.scrollTop=messages.scrollHeight;
+});
+</script>
+</body>
+</html>
