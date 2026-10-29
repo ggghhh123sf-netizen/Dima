@@ -16,602 +16,518 @@ input{min-width:0;width:100%;padding:12px;border-radius:12px;background:#0d1528;
 .primary{background:linear-gradient(135deg,#4d8cff,#2861e8);color:white;font-weight:650}
 .secondary{background:var(--panel2);color:white;border:1px solid var(--border)}
 .danger{background:#512637;color:#ffdce5}
-.app{max-width:1050px;margin:auto;padding:16px}
-.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:10px}
-.brand{display:flex;align-items:center;gap:12px}
-.logo{width:45px;height:45px;border-radius:15px;display:grid;place-items:center;font-size:24px;background:linear-gradient(135deg,#5794ff,#6548dc)}
-h1{font-size:21px;margin:0}
-.subtitle,.muted{color:var(--muted);font-size:12px;margin-top:4px}
-.badge{background:#15233a;border-radius:20px;padding:8px 11px;font-size:12px}
-.layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:14px;align-items:start}
-.panel{background:#121a2df5;border:1px solid var(--border);border-radius:18px;overflow:hidden}
-.sidebar{padding:15px}
-.section-title{font-size:12px;color:var(--muted);margin:4px 0 12px}
-.profile-card{background:var(--panel2);border-radius:14px;padding:12px;margin-bottom:20px}
-.profile-head{display:flex;align-items:center;gap:10px}
-.avatar{width:42px;height:42px;flex-shrink:0;border-radius:13px;display:grid;place-items:center;font-size:24px;background:#273a62}
-.big{width:52px;height:52px;font-size:29px}
-.profile-name{font-weight:700;overflow-wrap:anywhere}
-.profile-edit{display:flex;gap:6px;margin-top:12px}
-.profile-edit button{padding:9px}
-#emojis{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}
-#emojis button{background:#263553;color:white;font-size:20px;padding:5px;width:35px;height:35px}
-#people{display:flex;flex-direction:column;gap:7px}
-.person{display:flex;align-items:center;gap:9px;padding:9px;background:#111b2e;border-radius:12px;width:100%;text-align:left;color:var(--text);border:1px solid transparent}
-.person.active{border-color:#397bff;background:#17294a}
-.person .avatar{width:36px;height:36px;font-size:20px}
-.person-info{min-width:0}
-.person-name{font-size:13px;overflow-wrap:anywhere}
-.person-state{font-size:11px;color:var(--green)}
-.offline{color:var(--muted)!important}
-.chat-head{padding:16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:8px}
-.chat-title{font-weight:750}
-.chat-status{font-size:12px;color:var(--green);margin-top:4px}
-#messages{height:min(57vh,570px);min-height:300px;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:15px}
-.empty{margin:auto;text-align:center;color:var(--muted);padding:20px}
-.msg{display:flex;align-items:flex-end;gap:8px;max-width:90%}
-.msg.mine{align-self:flex-end;flex-direction:row-reverse}
-.msg .avatar{width:34px;height:34px;font-size:19px}
-.msg-content{min-width:0}
-.msg-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:11px;color:var(--muted);margin:0 4px 5px}
-.msg.mine .msg-meta{justify-content:flex-end}
-.msg-name{color:#a8c7ff;font-weight:700}
-.bubble{padding:10px 13px;border-radius:16px 16px 16px 5px;background:#202d48;border:1px solid #2b3a59;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5;font-size:14px}
-.mine .bubble{background:linear-gradient(135deg,#397bff,#285ed8);border-radius:16px 16px 5px 16px}
-.delete-message{margin-top:5px;padding:5px 8px;font-size:11px;background:#512637;color:#ffdce5}
-#typing{display:none;padding:0 16px 9px;color:var(--muted);font-size:12px}
-.composer{padding:12px;border-top:1px solid var(--border);display:flex;gap:8px;background:#0f1729}
-.composer input{flex:1;background:#18233a}
-#send{color:white;background:#397bff}
-.error{display:none;background:#482431;border:1px solid #744052;color:#ffd8e2;border-radius:12px;padding:11px;margin-bottom:12px;overflow-wrap:anywhere}
-.auth-wrap{max-width:430px;margin:8vh auto;padding:23px}
-.auth-wrap h2{margin:0}
-.auth-wrap p{color:var(--muted);font-size:14px;line-height:1.6}
-.auth-fields{display:grid;gap:10px;margin:18px 0 12px}
-.auth-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.footer-note{text-align:center;color:#7484a2;font-size:11px;padding:12px}
-.back-button{display:none;margin-right:8px;padding:7px 10px}
-.chat-head-left{display:flex;align-items:center;min-width:0}
-.chat-head-text{min-width:0}
-@media(max-width:700px){
+.app{max-width:1100px;margin:auto;padding:18px}
+.panel{background:rgba(18,26,45,.96);border:1px solid var(--border);border-radius:18px;padding:18px}
+.hidden{display:none!important}
+.muted{color:var(--muted)}
+h1,h2,h3,p{margin-top:0}
+.auth{max-width:420px;margin:8vh auto}
+.auth input{margin:6px 0 12px}
+.auth-actions{display:flex;gap:10px}
+.auth-actions button{flex:1}
+.error{color:#ff9da8;margin-top:12px;overflow-wrap:anywhere}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
+.layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:16px}
+.people{display:flex;flex-direction:column;gap:8px}
+.person{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:var(--panel2);color:white;border:1px solid var(--border)}
+.avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#263759;font-size:23px;flex-shrink:0}
+.status{font-size:12px;color:var(--green)}
+.chat{display:flex;flex-direction:column;min-height:65vh}
+.chat-head{display:flex;align-items:center;gap:10px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.messages{flex:1;min-height:250px;max-height:55vh;overflow-y:auto;padding:14px 0;display:flex;flex-direction:column;gap:10px}
+.message{max-width:85%;padding:10px 13px;border-radius:14px;background:var(--panel2);overflow-wrap:anywhere}
+.message.mine{align-self:flex-end;background:#2453a7}
+.message small{display:block;color:#c1cce2;font-size:11px;margin-bottom:4px}
+.composer{display:flex;gap:8px;padding-top:10px;border-top:1px solid var(--border)}
+.composer input{flex:1}
+.profile{display:flex;align-items:center;gap:12px;margin-bottom:15px}
+.profile-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+#emojiPicker{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+#emojiPicker button{font-size:23px;padding:6px;background:var(--panel2)}
+@media(max-width:680px){
 .app{padding:10px}
 .layout{grid-template-columns:1fr}
-.sidebar{padding:12px}
-.profile-card{margin-bottom:14px}
-.people-list{flex-direction:row!important;overflow-x:auto}
-.person{min-width:150px;width:auto}
-#messages{height:48vh;min-height:260px;padding:12px 9px}
-.msg{max-width:96%;gap:5px}
-.msg .avatar{width:29px;height:29px;font-size:17px}
-.chat-head{padding:13px}
-.composer{padding:9px}
-.badge{font-size:11px}
-.mobile-chat-open .sidebar{display:none}
-.mobile-chat-open .chat-panel{display:block}
-.mobile-chat-open .back-button{display:inline-block}
-.mobile-list-open .chat-panel{display:none}
+.people{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+.person{padding:8px}
+.person .avatar{width:34px;height:34px;font-size:19px}
+.chat{min-height:55vh}
+.messages{max-height:45vh}
+.top{align-items:flex-start}
 }
 </style>
 </head>
 <body>
-<div class="app" id="appRoot">
-<header class="topbar">
-  <div class="brand">
-    <div class="logo">✉</div>
-    <div>
-      <h1>Dima Messenger</h1>
-      <div class="subtitle">Твой личный чат</div>
+<div class="app">
+  <section id="authPanel" class="panel auth">
+    <h1>Dima Messenger</h1>
+    <p class="muted">Войди или создай аккаунт</p>
+    <label for="email">Электронная почта</label>
+    <input id="email" type="email" autocomplete="email" placeholder="name@example.com">
+    <label for="password">Пароль</label>
+    <input id="password" type="password" autocomplete="current-password" placeholder="Не менее 6 символов">
+    <div class="auth-actions">
+      <button id="login" type="button" class="primary">Войти</button>
+      <button id="register" type="button" class="secondary">Регистрация</button>
     </div>
-  </div>
-  <div class="badge">● Онлайн-чат</div>
-</header>
+    <div id="authError" class="error"></div>
+  </section>
 
-<div id="error" class="error"></div>
-
-<section id="auth" class="auth-wrap panel">
-  <h2>С возвращением 👋</h2>
-  <p>Войди в аккаунт или создай новый жопв.</p>
-  <div class="auth-fields">
-    <input id="email" type="email" autocomplete="email" placeholder="Email">
-    <input id="password" type="password" autocomplete="current-password" placeholder="Пароль">
-  </div>
-  <div class="auth-actions">
-    <button id="login" class="primary">Войти</button>
-    <button id="register" class="secondary">Регистрация</button>
-  </div>
-</section>
-
-<section id="chat" style="display:none">
-<div class="layout">
-<aside class="panel sidebar">
-  <h3 class="section-title">Твой профиль</h3>
-  <div class="profile-card">
-    <div class="profile-head">
-      <div id="myavatar" class="avatar big">😀</div>
+  <section id="messenger" class="hidden">
+    <header class="top">
       <div>
-        <div id="myname" class="profile-name">Пользователь</div>
-        <div class="muted">● Ты в сети</div>
+        <h1>Dima Messenger</h1>
+        <div class="muted">Твой чат</div>
       </div>
-    </div>
-    <div class="profile-edit">
-      <input id="newname" maxlength="30" placeholder="Твоё имя">
-      <button id="saveprofile" class="primary">Сохранить</button>
-    </div>
-    <div class="muted" style="margin-top:12px">Выбери аватарку</div>
-    <div id="emojis"></div>
-  </div>
-  <h3 class="section-title">Пользователи · нажми для личного чата</h3>
-  <div id="people" class="people-list">Загрузка...</div>
-  <button id="logout" class="secondary danger" style="width:100%;margin-top:16px">Выйти из аккаунта</button>
-</aside>
+      <button id="logout" type="button" class="secondary">Выйти</button>
+    </header>
 
-<section class="panel chat-panel">
-  <div class="chat-head">
-    <div class="chat-head-left">
-      <button id="backToGroup" class="secondary back-button" type="button">← Назад</button>
-      <div class="chat-head-text">
-        <div id="chatTitle" class="chat-title">💬 Общий чат</div>
-        <div id="chatStatus" class="chat-status">● Сообщения в реальном времени</div>
-      </div>
+    <div class="layout">
+      <aside class="panel">
+        <h2>Профиль</h2>
+        <div class="profile">
+          <div id="myAvatar" class="avatar">🙂</div>
+          <div style="min-width:0;flex:1">
+            <input id="myName" maxlength="30" placeholder="Твоё имя">
+            <div id="myEmail" class="muted" style="font-size:12px;margin-top:6px;overflow-wrap:anywhere"></div>
+          </div>
+        </div>
+        <div id="emojiPicker"></div>
+        <button id="saveProfile" type="button" class="primary">Сохранить профиль</button>
+        <div id="profileError" class="error"></div>
+        <hr style="border-color:var(--border);margin:18px 0">
+        <h2>Люди</h2>
+        <div id="people" class="people">
+          <p class="muted">Загрузка пользователей…</p>
+        </div>
+      </aside>
+
+      <main class="panel chat">
+        <div class="chat-head">
+          <div id="chatAvatar" class="avatar">🌐</div>
+          <div>
+            <h2 id="chatTitle" style="margin-bottom:3px">Общий чат</h2>
+            <div id="chatSubtitle" class="muted">Сообщения для всех</div>
+          </div>
+        </div>
+        <div id="messages" class="messages">
+          <p class="muted">Загрузка сообщений…</p>
+        </div>
+        <div id="chatError" class="error"></div>
+        <form id="composer" class="composer">
+          <input id="messageInput" maxlength="2000" autocomplete="off" placeholder="Напиши сообщение…">
+          <button id="send" type="submit" class="primary">Отправить</button>
+        </form>
+      </main>
     </div>
-    <button id="notifyButton" class="secondary" type="button" style="padding:7px 9px;font-size:12px">🔔 Уведомления</button>
-  </div>
-  <div id="messages"><div class="empty">Загрузка переписки...</div></div>
-  <div id="typing" aria-live="polite"></div>
-  <form id="composer" class="composer">
-    <input id="message" maxlength="1000" autocomplete="off" placeholder="Напиши сообщение...">
-    <button id="send" type="submit">➤</button>
-  </form>
-</section>
-</div>
-<div class="footer-note">Dima Messenger · оставайся на связи</div>
-</section>
+  </section>
 </div>
 
 <script type="module">
-import {initializeApp} from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
 import {
-  getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,
-  onAuthStateChanged,signOut
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut
 } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
 import {
-  getFirestore,collection,addDoc,query,where,orderBy,limit,
-  onSnapshot,serverTimestamp,deleteDoc,doc
+  getFirestore,
+  collection,
+  addDoc,
+  query,
+  orderBy,
+  limit,
+  onSnapshot,
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
 import {
-  getDatabase,ref,set,get,onValue,onDisconnect,remove,
+  getDatabase,
+  ref,
+  set,
+  onValue,
+  onDisconnect,
+  remove,
   serverTimestamp as rtdbTimestamp
 } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-database.js";
 
+/*
+  ВАЖНО:
+  Вставь сюда свой настоящий Firebase config из Firebase Console.
+  Не используй значения-примеры.
+*/
 const firebaseConfig = {
-  apiKey: "AIzaSyDpm_WzeaUue17urrQptihWbQQtWEOBp3U",
+  apiKey: "ВСТАВЬ_API_KEY",
   authDomain: "dima-messenger.firebaseapp.com",
+  databaseURL: "https://dima-messenger-default-rtdb.firebaseio.com",
   projectId: "dima-messenger",
   storageBucket: "dima-messenger.firebasestorage.app",
-  messagingSenderId: "205525066127",
-  appId: "1:205525066127:web:b44470d06e4e5ccb21abfa",
-  measurementId: "G-8HP9CRT76R",
-  databaseURL: "https://dima-messenger-default-rtdb.firebaseio.com"
+  messagingSenderId: "ВСТАВЬ_MESSAGING_SENDER_ID",
+  appId: "ВСТАВЬ_APP_ID"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-const realtime = getDatabase(app);
+const rtdb = getDatabase(app);
+
 const $ = id => document.getElementById(id);
-
-const emojiList = ["😀","😎","🐱","🐸","👻","🤖","🎮","⭐","🔥","🦊","🐼","💀","🐺","🦄","🚀","🍀"];
-
-let user = null;
-let myProfile = {name:"",avatar:"😀"};
+const emojis = ["🙂","😎","🐱","🐸","🦊","🐼","👻","🤖","🐺","🔥","⭐","💎"];
+let currentUser = null;
+let myProfile = {name:"",avatar:"🙂"};
+let selectedUser = null;
 let profiles = {};
-let statuses = {};
-let typingUsers = {};
-let cachedMessages = [];
-let stops = [];
-let myTypingRef = null;
-let typingTimer = null;
-let authGeneration = 0;
-let activePeer = null;
-let chatMode = "group";
-let currentMessagesStop = null;
-let messagesFirstLoad = true;
-let seenMessageIds = new Set();
+let stopMessages = null;
+let stopProfiles = null;
+let stopPresence = null;
+let selectedEmoji = "🙂";
 
-function showError(s) {
-  $("error").textContent = s;
-  $("error").style.display = "block";
+function showError(id, message="") {
+  $(id).textContent = message;
 }
 
-function clearError() {
-  $("error").textContent = "";
-  $("error").style.display = "none";
+function safeText(value) {
+  return String(value ?? "");
 }
 
-function safe(v) {
-  return String(v ?? "").replace(/[&<>"']/g, c => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-  }[c]));
+function setAuthButtons(disabled) {
+  $("login").disabled = disabled;
+  $("register").disabled = disabled;
 }
 
-function stopListeners() {
-  stops.forEach(fn => fn());
-  stops = [];
-  clearTimeout(typingTimer);
-  if (myTypingRef) remove(myTypingRef).catch(() => {});
-  myTypingRef = null;
-  typingUsers = {};
+function friendlyError(error) {
+  const messages = {
+    "auth/invalid-email":"Проверь адрес электронной почты.",
+    "auth/missing-password":"Введи пароль.",
+    "auth/weak-password":"Пароль должен содержать не менее 6 символов.",
+    "auth/email-already-in-use":"Этот адрес уже зарегистрирован.",
+    "auth/invalid-credential":"Неверная почта или пароль.",
+    "auth/user-not-found":"Аккаунт не найден.",
+    "auth/wrong-password":"Неверная почта или пароль.",
+    "auth/network-request-failed":"Нет соединения. Проверь интернет.",
+    "permission-denied":"Нет доступа. Проверь правила Firebase."
+  };
+  return messages[error?.code] || error?.message || "Неизвестная ошибка.";
 }
 
-function setTyping(active) {
-  if (!user || !myTypingRef || chatMode !== "group") return;
-  set(myTypingRef,{typing:active,updatedAt:Date.now()}).catch(()=>{});
-}
-
-function renderTyping() {
-  const names = Object.entries(typingUsers)
-    .filter(([id,d]) => id !== user?.uid && d?.typing && Date.now()-(d.updatedAt||0)<6000)
-    .map(([id]) => profiles[id]?.name || "Кто-то");
-
-  $("typing").textContent = chatMode === "group" && names.length
-    ? names.join(", ") + (names.length === 1 ? " печатает…" : " печатают…")
-    : "";
-  $("typing").style.display = $("typing").textContent ? "block" : "none";
-}
-
-function renderPeople() {
-  const people = Object.entries(profiles)
-    .filter(([id, profile]) => id !== user?.uid && profile && profile.deleted !== true && profile.active !== false)
-    .sort((a,b) => (statuses[a[0]]?.state === "online" ? 0 : 1) - (statuses[b[0]]?.state === "online" ? 0 : 1));
-
-  $("people").innerHTML =
-    '<button type="button" class="person '+(chatMode==="group"?"active":"")+'" id="groupChatButton"><div class="avatar">👥</div><div class="person-info"><div class="person-name">Общий чат</div><div class="person-state">Все участники</div></div></button>' +
-    (people.length ? people.map(([id,p]) =>
-      `<button type="button" class="person ${activePeer===id&&chatMode==="private"?"active":""}" data-person="${safe(id)}"><div class="avatar">${safe(p.avatar||"😀")}</div><div class="person-info"><div class="person-name">${safe(p.name||"Пользователь")}</div><div class="person-state ${statuses[id]?.state==="online"?"":"offline"}">${statuses[id]?.state==="online"?"● В сети":"○ Не в сети"}</div></div></button>`
-    ).join("") : '<div class="muted">Пока нет других пользователей</div>');
-}
-
-function renderMessages() {
-  const box = $("messages");
-  const near = box.scrollHeight - box.scrollTop - box.clientHeight < 100;
-
-  if (!cachedMessages.length) {
-    box.innerHTML = '<div class="empty">✨ Здесь пока тихо.<br>Отправь первое сообщение!</div>';
+$("login").addEventListener("click", async () => {
+  showError("authError");
+  const email = $("email").value.trim();
+  const password = $("password").value;
+  if (!email || !password) {
+    showError("authError","Введи почту и пароль.");
     return;
   }
+  setAuthButtons(true);
+  try {
+    await signInWithEmailAndPassword(auth,email,password);
+  } catch (error) {
+    showError("authError","Вход: " + friendlyError(error));
+  } finally {
+    setAuthButtons(false);
+  }
+});
 
-  box.innerHTML = cachedMessages.map(m => {
-    const mine = m.uid === user?.uid;
-    const p = profiles[m.uid] || {name:m.name||"Пользователь",avatar:"😀"};
-    const time = m.createdAt?.toDate
-      ? m.createdAt.toDate().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})
-      : "";
+$("register").addEventListener("click", async () => {
+  showError("authError");
+  const email = $("email").value.trim();
+  const password = $("password").value;
+  if (!email || !password) {
+    showError("authError","Введи почту и пароль.");
+    return;
+  }
+  if (password.length < 6) {
+    showError("authError","Пароль должен содержать не менее 6 символов.");
+    return;
+  }
+  setAuthButtons(true);
+  try {
+    await createUserWithEmailAndPassword(auth,email,password);
+  } catch (error) {
+    showError("authError","Регистрация: " + friendlyError(error));
+  } finally {
+    setAuthButtons(false);
+  }
+});
 
-    return `<div class="msg ${mine?"mine":""}">
-      <div class="avatar">${safe(p.avatar||"😀")}</div>
-      <div class="msg-content">
-        <div class="msg-meta">
-          <span class="msg-name">${safe(p.name||m.name||"Пользователь")}</span>
-          <span>${safe(time)}</span>
-        </div>
-        <div class="bubble">${safe(m.text||"")}</div>
-        ${chatMode==="group" ? `<button type="button" class="delete-message" data-delete="${safe(m.id)}">🗑️ Удалить</button>` : ""}
-      </div>
-    </div>`;
-  }).join("");
+$("password").addEventListener("keydown", event => {
+  if (event.key === "Enter") $("login").click();
+});
 
-  if (near) box.scrollTop = box.scrollHeight;
+$("logout").addEventListener("click", async () => {
+  try {
+    await signOut(auth);
+  } catch (error) {
+    showError("chatError",friendlyError(error));
+  }
+});
+
+function drawEmojiPicker() {
+  $("emojiPicker").replaceChildren();
+  emojis.forEach(emoji => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = emoji;
+    button.title = "Выбрать аватар";
+    button.addEventListener("click", () => {
+      selectedEmoji = emoji;
+      $("myAvatar").textContent = emoji;
+    });
+    $("emojiPicker").appendChild(button);
+  });
 }
 
-function showMessageNotification(m) {
-  if (!m || m.uid === user?.uid) return;
+drawEmojiPicker();
 
-  const sender = profiles[m.uid]?.name || m.name || "Новое сообщение";
-  const body = String(m.text || "").slice(0,120);
+$("saveProfile").addEventListener("click", async () => {
+  if (!currentUser) return;
+  showError("profileError");
+  const name = $("myName").value.trim().slice(0,30);
+  if (!name) {
+    showError("profileError","Введи имя.");
+    return;
+  }
+  try {
+    myProfile = {name,avatar:selectedEmoji};
+    await set(ref(rtdb,"profiles/" + currentUser.uid),{
+      name,
+      avatar:selectedEmoji,
+      email:currentUser.email || ""
+    });
+    $("myAvatar").textContent = selectedEmoji;
+    $("myName").value = name;
+  } catch (error) {
+    showError("profileError",friendlyError(error));
+  }
+});
 
-  if ("Notification" in window && Notification.permission === "granted") {
-    try {
-      const n = new Notification(sender,{body,tag:"dima-"+m.id});
-      n.onclick = () => {
-        window.focus();
-        n.close();
-      };
-    } catch(e) {
-      console.warn("Уведомление не показано",e);
-    }
+function drawPeople() {
+  const root = $("people");
+  root.replaceChildren();
+
+  const groupButton = document.createElement("button");
+  groupButton.type = "button";
+  groupButton.className = "person";
+  groupButton.innerHTML = '<span class="avatar">🌐</span><span>Общий чат</span>';
+  groupButton.addEventListener("click", () => openChat(null));
+  root.appendChild(groupButton);
+
+  const others = Object.entries(profiles).filter(([uid]) => uid !== currentUser?.uid);
+  if (!others.length) {
+    const empty = document.createElement("p");
+    empty.className = "muted";
+    empty.textContent = "Пока других пользователей нет.";
+    root.appendChild(empty);
   }
 
-  const toast = document.createElement("div");
-  toast.textContent = sender + ": " + body;
+  others.forEach(([uid,profile]) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "person";
 
-  Object.assign(toast.style,{
-    position:"fixed",
-    right:"14px",
-    bottom:"14px",
-    zIndex:"9999",
-    maxWidth:"min(360px,90vw)",
-    padding:"12px 16px",
-    borderRadius:"12px",
-    background:"#1a2540",
-    border:"1px solid #397bff",
-    color:"white",
-    boxShadow:"0 8px 30px #0008"
+    const avatar = document.createElement("span");
+    avatar.className = "avatar";
+    avatar.textContent = profile.avatar || "🙂";
+
+    const info = document.createElement("span");
+    info.style.minWidth = "0";
+    const name = document.createElement("span");
+    name.textContent = profile.name || "Пользователь";
+    const status = document.createElement("span");
+    status.className = "status";
+    status.style.display = "block";
+    status.textContent = profile.online ? "В сети" : "Не в сети";
+
+    info.append(name,status);
+    button.append(avatar,info);
+    button.addEventListener("click", () => openChat(uid));
+    root.appendChild(button);
+  });
+}
+
+function openChat(uid) {
+  selectedUser = uid;
+  $("chatTitle").textContent = uid ? (profiles[uid]?.name || "Личный чат") : "Общий чат";
+  $("chatAvatar").textContent = uid ? (profiles[uid]?.avatar || "🙂") : "🌐";
+  $("chatSubtitle").textContent = uid ? "Личные сообщения" : "Сообщения для всех";
+  showError("chatError");
+
+  if (stopMessages) stopMessages();
+
+  $("messages").replaceChildren();
+  const messagesRef = collection(db,"messages");
+  const q = query(messagesRef,orderBy("createdAt","asc"),limit(100));
+
+  stopMessages = onSnapshot(q, snapshot => {
+    const root = $("messages");
+    root.replaceChildren();
+
+    const docs = snapshot.docs.filter(doc => {
+      const data = doc.data();
+      if (!uid) return !data.to;
+      return (data.uid === currentUser.uid && data.to === uid) ||
+             (data.uid === uid && data.to === currentUser.uid);
+    });
+
+    if (!docs.length) {
+      const empty = document.createElement("p");
+      empty.className = "muted";
+      empty.textContent = "Сообщений пока нет. Напиши первым!";
+      root.appendChild(empty);
+    }
+
+    docs.forEach(doc => {
+      const data = doc.data();
+      const item = document.createElement("div");
+      item.className = "message" + (data.uid === currentUser.uid ? " mine" : "");
+
+      const meta = document.createElement("small");
+      meta.textContent = (data.name || "Пользователь") + " · " +
+        (data.createdAt?.toDate ? data.createdAt.toDate().toLocaleString() : "сейчас");
+
+      const body = document.createElement("div");
+      body.textContent = safeText(data.text);
+
+      item.append(meta,body);
+      root.appendChild(item);
+    });
+    root.scrollTop = root.scrollHeight;
+  }, error => {
+    showError("chatError","Не удалось загрузить сообщения: " + friendlyError(error));
+  });
+}
+
+$("composer").addEventListener("submit", async event => {
+  event.preventDefault();
+  if (!currentUser) return;
+
+  const text = $("messageInput").value.trim();
+  if (!text) return;
+
+  $("send").disabled = true;
+  showError("chatError");
+
+  try {
+    const message = {
+      text,
+      uid: currentUser.uid,
+      name: myProfile.name || currentUser.email || "Пользователь",
+      createdAt: serverTimestamp()
+    };
+    if (selectedUser) message.to = selectedUser;
+
+    await addDoc(collection(db,"messages"),message);
+    $("messageInput").value = "";
+  } catch (error) {
+    showError("chatError","Не удалось отправить: " + friendlyError(error));
+  } finally {
+    $("send").disabled = false;
+  }
+});
+
+async function startUser(user) {
+  currentUser = user;
+  $("authPanel").classList.add("hidden");
+  $("messenger").classList.remove("hidden");
+  $("myEmail").textContent = user.email || "";
+
+  if (stopProfiles) stopProfiles();
+  if (stopPresence) stopPresence();
+  if (stopMessages) {
+    stopMessages();
+    stopMessages = null;
+  }
+
+  const profileRef = ref(rtdb,"profiles/" + user.uid);
+  stopProfiles = onValue(ref(rtdb,"profiles"), snapshot => {
+    profiles = snapshot.val() || {};
+    const mine = profiles[user.uid];
+
+    if (mine) {
+      myProfile = {
+        name: mine.name || "",
+        avatar: mine.avatar || "🙂"
+      };
+      $("myName").value = myProfile.name;
+      selectedEmoji = myProfile.avatar;
+      $("myAvatar").textContent = selectedEmoji;
+    } else {
+      myProfile = {
+        name: user.email?.split("@")[0] || "Пользователь",
+        avatar: "🙂"
+      };
+      $("myName").value = myProfile.name;
+      $("myAvatar").textContent = myProfile.avatar;
+    }
+
+    drawPeople();
+
+    if (selectedUser && !profiles[selectedUser]) {
+      openChat(null);
+    } else {
+      $("chatTitle").textContent = selectedUser
+        ? (profiles[selectedUser]?.name || "Личный чат")
+        : "Общий чат";
+      $("chatAvatar").textContent = selectedUser
+        ? (profiles[selectedUser]?.avatar || "🙂")
+        : "🌐";
+    }
+  }, error => {
+    showError("profileError","Ошибка профилей: " + friendlyError(error));
   });
 
-  toast.setAttribute("role","status");
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(),4500);
+  try {
+    await set(profileRef,{
+      name: myProfile.name || user.email?.split("@")[0] || "Пользователь",
+      avatar: myProfile.avatar || "🙂",
+      email: user.email || ""
+    });
+
+    const statusRef = ref(rtdb,"status/" + user.uid);
+    await onDisconnect(statusRef).set({
+      online:false,
+      lastChanged:rtdbTimestamp()
+    });
+
+    await set(statusRef,{
+      online:true,
+      lastChanged:rtdbTimestamp()
+    });
+
+    if (stopPresence) stopPresence();
+    stopPresence = onValue(ref(rtdb,"status"), snapshot => {
+      const statuses = snapshot.val() || {};
+      Object.keys(profiles).forEach(uid => {
+        profiles[uid].online = Boolean(statuses[uid]?.online);
+      });
+      drawPeople();
+    });
+  } catch (error) {
+    showError("profileError","Ошибка подключения: " + friendlyError(error));
+  }
+
+  openChat(null);
 }
 
-$("notifyButton").addEventListener("click",async () => {
-  if (!("Notification" in window)) {
-    showError("Этот браузер не поддерживает уведомления.");
-    return;
-  }
-
-  try {
-    const permission = await Notification.requestPermission();
-
-    if (permission === "granted") {
-      $("notifyButton").textContent = "🔔 Уведомления включены";
-      clearError();
-      new Notification("Dima Messenger",{body:"Уведомления включены"});
-    } else {
-      showError("Разреши уведомления в настройках браузера.");
-    }
-  } catch(e) {
-    showError("Не удалось включить уведомления: " + e.message);
-  }
-});
-
-function watchMessages() {
-  if (currentMessagesStop) {
-    currentMessagesStop();
-    currentMessagesStop = null;
-  }
-
-  cachedMessages = [];
-  messagesFirstLoad = true;
-  seenMessageIds = new Set();
-  renderMessages();
-
-  if (!user) return;
-
-  let q;
-
-  if (chatMode === "group") {
-    q = query(collection(db,"messages"),orderBy("createdAt","asc"),limit(200));
+onAuthStateChanged(auth, user => {
+  if (user) {
+    startUser(user);
   } else {
-    q = query(collection(db,"privateMessages"),where("participants","array-contains",user.uid),limit(500));
-  }
-
-  currentMessagesStop = onSnapshot(q,s => {
-    let incoming;
-
-    if (chatMode === "private") {
-      const ids = [user.uid,activePeer].sort();
-
-      incoming = s.docs
-        .map(d => ({id:d.id,...d.data()}))
-        .filter(m => Array.isArray(m.participants) && m.participants.length === 2 && m.participants.includes(ids[0]) && m.participants.includes(ids[1]))
-        .sort((a,b) => (a.createdAt?.toMillis?.()||0) - (b.createdAt?.toMillis?.()||0));
-    } else {
-      incoming = s.docs.map(d => ({id:d.id,...d.data()}));
-    }
-
-    if (!messagesFirstLoad) {
-      incoming.forEach(m => {
-        if (!seenMessageIds.has(m.id) && m.uid !== user.uid) {
-          showMessageNotification(m);
-        }
-      });
-    }
-
-    incoming.forEach(m => seenMessageIds.add(m.id));
-    messagesFirstLoad = false;
-    cachedMessages = incoming;
-    renderMessages();
-  },e => showError("Ошибка сообщений: " + e.message));
-}
-
-function openGroup() {
-  chatMode = "group";
-  activePeer = null;
-  $("chatTitle").textContent = "💬 Общий чат";
-  $("chatStatus").textContent = "● Сообщения в реальном времени";
-  $("message").placeholder = "Напиши сообщение...";
-  $("appRoot").classList.remove("mobile-chat-open");
-  $("appRoot").classList.add("mobile-list-open");
-  renderPeople();
-  renderTyping();
-  watchMessages();
-}
-
-function openPrivate(id) {
-  if (!user || id === user.uid) return;
-
-  activePeer = id;
-  chatMode = "private";
-
-  const p = profiles[id] || {name:"Пользователь",avatar:"😀"};
-  $("chatTitle").textContent = (p.avatar||"😀") + " " + (p.name||"Личная переписка");
-  $("chatStatus").textContent = statuses[id]?.state === "online" ? "● В сети" : "○ Не в сети";
-  $("message").placeholder = "Сообщение для " + (p.name||"пользователя") + "...";
-
-  $("appRoot").classList.add("mobile-chat-open");
-  $("appRoot").classList.remove("mobile-list-open");
-
-  renderPeople();
-  renderTyping();
-  watchMessages();
-}
-
-$("emojis").innerHTML = emojiList.map(e => `<button type="button" data-emoji="${e}">${e}</button>`).join("");
-
-$("emojis").addEventListener("click",async e => {
-  const a = e.target.dataset.emoji;
-  if (!a || !user) return;
-
-  myProfile = {...myProfile,avatar:a};
-  $("myavatar").textContent = a;
-
-  try {
-    await set(ref(realtime,"profiles/"+user.uid),myProfile);
-    clearError();
-  } catch(x) {
-    showError("Ошибка аватарки: " + x.message);
+    currentUser = null;
+    selectedUser = null;
+    profiles = {};
+    if (stopMessages) stopMessages();
+    if (stopProfiles) stopProfiles();
+    if (stopPresence) stopPresence();
+    stopMessages = stopProfiles = stopPresence = null;
+    $("messenger").classList.add("hidden");
+    $("authPanel").classList.remove("hidden");
   }
 });
 
-$("people").addEventListener("click",e => {
-  const group = e.target.closest("#groupChatButton");
-  if (group) {
-    openGroup();
-    return;
-  }
-
-  const p = e.target.closest("[data-person]");
-  if (p) openPrivate(p.dataset.person);
+window.addEventListener("unhandledrejection", event => {
+  console.error("Необработанная ошибка:",event.reason);
 });
-
-$("backToGroup").onclick = openGroup;
-
-$("register").onclick = async () => {
-  clearError();
-  try {
-    await createUserWithEmailAndPassword(auth,$("email").value.trim(),$("password").value);
-  } catch(e) {
-    showError("Регистрация: " + e.message);
-  }
-};
-
-$("login").onclick = async () => {
-  clearError();
-  try {
-    await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value);
-  } catch(e) {
-    showError("Вход: " + e.message);
-  }
-};
-
-$("password").addEventListener("keydown",e => {
-  if (e.key === "Enter") $("login").click();
-});
-
-$("saveprofile").onclick = async () => {
-  if (!user) return;
-
-  const name = $("newname").value.trim().slice(0,30);
-  if (!name) {
-    showError("Введи имя.");
-    return;
-  }
-
-  myProfile = {...myProfile,name};
-  $("myname").textContent = name;
-
-  try {
-    await set(ref(realtime,"profiles/"+user.uid),myProfile);
-    clearError();
-  } catch(e) {
-    showError("Ошибка профиля: " + e.message);
-  }
-};
-
-$("logout").onclick = async () => {
-  try {
-    if (user) {
-      await remove(ref(realtime,"typing/"+user.uid));
-      await set(ref(realtime,"status/"+user.uid),{
-        state:"offline",
-        last_changed:rtdbTimestamp()
-      });
-    }
-    await signOut(auth);
-  } catch(e) {
-    showError("Ошибка выхода: " + e.message);
-  }
-};
-
-$("message").addEventListener("input",() => {
-  if (chatMode !== "group" || !user || !myTypingRef) return;
-
-  clearTimeout(typingTimer);
-  const active = !!$("message").value.trim();
-  setTyping(active);
-
-  if (active) typingTimer = setTimeout(() => setTyping(false),2500);
-});
-
-$("messages").addEventListener("click", async e => {
-  const button = e.target.closest("[data-delete]");
-  if (!button || !user || chatMode !== "group") return;
-
-  if (!confirm("Удалить это сообщение у всех участников общего чата?")) return;
-
-  try {
-    await deleteDoc(doc(db, "messages", button.dataset.delete));
-  } catch (error) {
-    showError("Не удалось удалить сообщение: " + error.message);
-  }
-});
-  onAuthStateChanged(auth, async current => {
-  stopListeners();
-
-  if (currentMessagesStop) {
-    currentMessagesStop();
-    currentMessagesStop = null;
-  }
-
-  user = current;
-  cachedMessages = [];
-  profiles = {};
-  statuses = {};
-  activePeer = null;
-  chatMode = "group";
-
-  $("auth").style.display = user ? "none" : "block";
-  $("chat").style.display = user ? "block" : "none";
-
-  if (!user) return;
-
-  try {
-    const uid = user.uid;
-    const profileRef = ref(realtime, "profiles/" + uid);
-    const snapshot = await get(profileRef);
-
-    myProfile = snapshot.exists()
-      ? snapshot.val()
-      : {
-          name: user.email?.split("@")[0] || "Пользователь",
-          avatar: "😀"
-        };
-
-    await set(profileRef, myProfile);
-
-    $("myname").textContent = myProfile.name;
-    $("myavatar").textContent = myProfile.avatar || "😀";
-    $("newname").value = myProfile.name || "";
-
-    stops.push(onValue(ref(realtime, "profiles"), snapshot => {
-      profiles = snapshot.val() || {};
-      renderPeople();
-      renderMessages();
-      renderTyping();
-    }));
-
-    stops.push(onValue(ref(realtime, "status"), snapshot => {
-      statuses = snapshot.val() || {};
-      renderPeople();
-    }));
-
-    stops.push(onValue(ref(realtime, "typing"), snapshot => {
-      typingUsers = snapshot.val() || {};
-      renderTyping();
-    }));
-
-    openGroup();
-  } catch (error) {
-    showError("Ошибка запуска чата: " + error.message);
-  }
-});
+</script>
+</body>
+</html>
