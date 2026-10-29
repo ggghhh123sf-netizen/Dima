@@ -543,10 +543,75 @@ $("message").addEventListener("input",() => {
   if (active) typingTimer = setTimeout(() => setTyping(false),2500);
 });
 
-$("messages").addEventListener("click",async e => {
+$("messages").addEventListener("click", async e => {
   const button = e.target.closest("[data-delete]");
   if (!button || !user || chatMode !== "group") return;
 
   if (!confirm("Удалить это сообщение у всех участников общего чата?")) return;
 
-  button.d
+  try {
+    await deleteDoc(doc(db, "messages", button.dataset.delete));
+  } catch (error) {
+    showError("Не удалось удалить сообщение: " + error.message);
+  }
+});
+  onAuthStateChanged(auth, async current => {
+  stopListeners();
+
+  if (currentMessagesStop) {
+    currentMessagesStop();
+    currentMessagesStop = null;
+  }
+
+  user = current;
+  cachedMessages = [];
+  profiles = {};
+  statuses = {};
+  activePeer = null;
+  chatMode = "group";
+
+  $("auth").style.display = user ? "none" : "block";
+  $("chat").style.display = user ? "block" : "none";
+
+  if (!user) return;
+
+  try {
+    const uid = user.uid;
+    const profileRef = ref(realtime, "profiles/" + uid);
+    const snapshot = await get(profileRef);
+
+    myProfile = snapshot.exists()
+      ? snapshot.val()
+      : {
+          name: user.email?.split("@")[0] || "Пользователь",
+          avatar: "😀"
+        };
+
+    await set(profileRef, myProfile);
+
+    $("myname").textContent = myProfile.name;
+    $("myavatar").textContent = myProfile.avatar || "😀";
+    $("newname").value = myProfile.name || "";
+
+    stops.push(onValue(ref(realtime, "profiles"), snapshot => {
+      profiles = snapshot.val() || {};
+      renderPeople();
+      renderMessages();
+      renderTyping();
+    }));
+
+    stops.push(onValue(ref(realtime, "status"), snapshot => {
+      statuses = snapshot.val() || {};
+      renderPeople();
+    }));
+
+    stops.push(onValue(ref(realtime, "typing"), snapshot => {
+      typingUsers = snapshot.val() || {};
+      renderTyping();
+    }));
+
+    openGroup();
+  } catch (error) {
+    showError("Ошибка запуска чата: " + error.message);
+  }
+});
