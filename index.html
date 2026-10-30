@@ -96,17 +96,71 @@ overflow-wrap:anywhere
 display:block;color:#c1cce2;
 font-size:11px;margin-bottom:4px
 }
+.message img{
+display:block;
+max-width:240px;
+max-height:300px;
+width:auto;
+height:auto;
+object-fit:contain;
+border-radius:12px;
+margin-top:6px;
+cursor:pointer
+}
 .composer{
 display:flex;gap:8px;padding-top:10px;
-border-top:1px solid var(--border)
+border-top:1px solid var(--border);
+align-items:center
 }
-.composer input{flex:1}
-.profile{display:flex;align-items:center;gap:12px;margin-bottom:15px}
+.composer input[type="text"]{flex:1}
+.photo-label{
+display:grid;
+place-items:center;
+cursor:pointer;
+min-width:46px;
+height:46px;
+font-size:22px;
+padding:8px
+}
+#photoInput{display:none}
+.profile{
+display:flex;align-items:center;gap:12px;margin-bottom:15px
+}
 #emojiPicker{
 display:flex;gap:6px;flex-wrap:wrap;margin:10px 0
 }
 #emojiPicker button{
 font-size:23px;padding:6px;background:var(--panel2)
+}
+#photoPreview{
+max-width:120px;
+max-height:100px;
+border-radius:10px;
+margin-top:8px
+}
+.photo-viewer{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.92);
+z-index:1000;
+display:none;
+align-items:center;
+justify-content:center;
+padding:15px
+}
+.photo-viewer.active{display:flex}
+.photo-viewer img{
+max-width:100%;
+max-height:90vh;
+object-fit:contain
+}
+.photo-viewer button{
+position:absolute;
+top:15px;
+right:15px;
+font-size:22px;
+background:#263759;
+color:white
 }
 @media(max-width:680px){
 .app{padding:10px}
@@ -117,11 +171,14 @@ font-size:23px;padding:6px;background:var(--panel2)
 .chat{min-height:55vh}
 .messages{max-height:45vh}
 .top{align-items:flex-start}
+.composer{gap:5px}
+.composer button{padding:10px}
 }
 </style>
 </head>
 
 <body>
+
 <div class="app">
 
 <section id="authPanel" class="panel auth">
@@ -155,10 +212,12 @@ font-size:23px;padding:6px;background:var(--panel2)
 <div class="layout">
 
 <aside class="panel">
+
 <h2>Профиль</h2>
 
 <div class="profile">
 <div id="myAvatar" class="avatar">🙂</div>
+
 <div style="min-width:0;flex:1">
 <input id="myName" maxlength="30" placeholder="Твоё имя">
 <div id="myEmail" class="muted" style="font-size:12px;margin-top:6px;overflow-wrap:anywhere"></div>
@@ -166,15 +225,18 @@ font-size:23px;padding:6px;background:var(--panel2)
 </div>
 
 <div id="emojiPicker"></div>
+
 <button id="saveProfile" type="button" class="primary">Сохранить профиль</button>
 <div id="profileError" class="error"></div>
 
 <hr style="border-color:var(--border);margin:18px 0">
 
 <h2>Люди</h2>
+
 <div id="people" class="people">
 <p class="muted">Загрузка пользователей…</p>
 </div>
+
 </aside>
 
 <main class="panel chat">
@@ -194,13 +256,38 @@ font-size:23px;padding:6px;background:var(--panel2)
 <div id="chatError" class="error"></div>
 
 <form id="composer" class="composer">
-<input id="messageInput" maxlength="2000" autocomplete="off" placeholder="Напиши сообщение…">
+
+<label for="photoInput" class="secondary photo-label" title="Отправить фотографию">📷</label>
+
+<input
+id="photoInput"
+type="file"
+accept="image/*"
+>
+
+<input
+id="messageInput"
+type="text"
+maxlength="2000"
+autocomplete="off"
+placeholder="Напиши сообщение…"
+>
+
 <button id="send" type="submit" class="primary">Отправить</button>
+
 </form>
 
+<img id="photoPreview" class="hidden" alt="Предпросмотр фотографии">
+
 </main>
+
 </div>
 </section>
+</div>
+
+<div id="photoViewer" class="photo-viewer">
+<button id="closeViewer" type="button">✕</button>
+<img id="viewerImage" alt="Фотография">
 </div>
 
 <script type="module">
@@ -235,6 +322,13 @@ onDisconnect,
 serverTimestamp as rtdbTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
+import {
+getStorage,
+ref as storageRef,
+uploadBytes,
+getDownloadURL
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
 
 /* FIREBASE CONFIG */
 
@@ -256,6 +350,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const rtdb = getDatabase(app);
+const storage = getStorage(app);
 
 const $ = id => document.getElementById(id);
 
@@ -270,6 +365,8 @@ let stopProfiles = null;
 let stopPresence = null;
 let selectedEmoji = "🙂";
 
+
+/* ERRORS */
 
 function showError(id,message=""){
 $(id).textContent = message;
@@ -286,7 +383,10 @@ const messages = {
 "auth/user-not-found":"Аккаунт не найден.",
 "auth/wrong-password":"Неверная почта или пароль.",
 "auth/network-request-failed":"Нет соединения. Проверь интернет.",
-"auth/operation-not-allowed":"В Firebase не включён вход по Email/Password.",
+"auth/operation-not-allowed":"Включи Email/Password в Firebase Authentication.",
+"storage/unauthorized":"Нет доступа к фотографиям. Проверь правила Storage.",
+"storage/bucket-not-found":"Firebase Storage ещё не настроен.",
+"storage/unknown":"Ошибка загрузки фотографии.",
 "permission-denied":"Нет доступа. Проверь правила Firebase."
 };
 
@@ -341,7 +441,7 @@ showError("authError","Введи почту и пароль.");
 return;
 }
 
-if(password.length < 6){
+if(password.length<6){
 showError("authError","Пароль должен содержать не менее 6 символов.");
 return;
 }
@@ -432,6 +532,7 @@ $("myAvatar").textContent = selectedEmoji;
 $("myName").value = name;
 
 }catch(error){
+console.error(error);
 showError("profileError",friendlyError(error));
 }
 
@@ -512,7 +613,6 @@ if(stopMessages) stopMessages();
 $("messages").replaceChildren();
 
 const messagesRef = collection(db,"messages");
-
 const q = query(messagesRef,orderBy("createdAt","asc"),limit(100));
 
 stopMessages = onSnapshot(q,snapshot=>{
@@ -555,7 +655,28 @@ meta.textContent = (data.name || "Пользователь")+" · "+
 (data.createdAt?.toDate ? data.createdAt.toDate().toLocaleString() : "сейчас");
 
 const body = document.createElement("div");
-body.textContent = String(data.text ?? "");
+
+if(data.text){
+const text = document.createElement("div");
+text.textContent = data.text;
+body.appendChild(text);
+}
+
+if(data.imageUrl){
+
+const img = document.createElement("img");
+img.src = data.imageUrl;
+img.alt = "Фотография";
+img.loading = "lazy";
+
+img.addEventListener("click",()=>{
+$("viewerImage").src = data.imageUrl;
+$("photoViewer").classList.add("active");
+});
+
+body.appendChild(img);
+
+}
 
 item.append(meta,body);
 root.appendChild(item);
@@ -565,13 +686,60 @@ root.appendChild(item);
 root.scrollTop = root.scrollHeight;
 
 },error=>{
+console.error(error);
 showError("chatError","Не удалось загрузить сообщения: "+friendlyError(error));
 });
 
 }
 
 
-/* SEND MESSAGE */
+/* PHOTO PREVIEW */
+
+$("photoInput").addEventListener("change",()=>{
+
+const file = $("photoInput").files[0];
+
+if(!file){
+$("photoPreview").classList.add("hidden");
+return;
+}
+
+if(!file.type.startsWith("image/")){
+showError("chatError","Выбери изображение.");
+$("photoInput").value = "";
+return;
+}
+
+if(file.size>10*1024*1024){
+showError("chatError","Фотография должна быть меньше 10 МБ.");
+$("photoInput").value = "";
+$("photoPreview").classList.add("hidden");
+return;
+}
+
+$("photoPreview").src = URL.createObjectURL(file);
+$("photoPreview").classList.remove("hidden");
+showError("chatError");
+
+});
+
+
+/* PHOTO VIEWER */
+
+$("closeViewer").addEventListener("click",()=>{
+$("photoViewer").classList.remove("active");
+$("viewerImage").src = "";
+});
+
+$("photoViewer").addEventListener("click",event=>{
+if(event.target===$("photoViewer")){
+$("photoViewer").classList.remove("active");
+$("viewerImage").src = "";
+}
+});
+
+
+/* SEND MESSAGE AND PHOTO */
 
 $("composer").addEventListener("submit",async event=>{
 
@@ -580,8 +748,19 @@ event.preventDefault();
 if(!currentUser) return;
 
 const text = $("messageInput").value.trim();
+const file = $("photoInput").files[0];
 
-if(!text) return;
+if(!text && !file) return;
+
+if(file && !file.type.startsWith("image/")){
+showError("chatError","Выбери изображение.");
+return;
+}
+
+if(file && file.size>10*1024*1024){
+showError("chatError","Фотография должна быть меньше 10 МБ.");
+return;
+}
 
 $("send").disabled = true;
 showError("chatError");
@@ -589,22 +768,55 @@ showError("chatError");
 try{
 
 const message = {
-text,
 uid:currentUser.uid,
 name:myProfile.name || currentUser.email || "Пользователь",
 createdAt:serverTimestamp()
 };
 
-if(selectedUser) message.to = selectedUser;
+if(text){
+message.text = text;
+}
+
+if(file){
+
+showError("chatError","Загружаю фотографию...");
+
+const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g,"_");
+
+const path = "chatPhotos/"+currentUser.uid+"/"+Date.now()+"_"+safeName;
+
+const photoRef = storageRef(storage,path);
+
+await uploadBytes(photoRef,file,{
+contentType:file.type
+});
+
+message.imageUrl = await getDownloadURL(photoRef);
+
+}
+
+if(selectedUser){
+message.to = selectedUser;
+}
 
 await addDoc(collection(db,"messages"),message);
 
 $("messageInput").value = "";
+$("photoInput").value = "";
+$("photoPreview").src = "";
+$("photoPreview").classList.add("hidden");
+
+showError("chatError");
 
 }catch(error){
-showError("chatError","Не удалось отправить: "+friendlyError(error));
+
+console.error(error);
+showError("chatError","Ошибка отправки: "+friendlyError(error));
+
 }finally{
+
 $("send").disabled = false;
+
 }
 
 });
@@ -683,11 +895,18 @@ showError("profileError","Ошибка профилей: "+friendlyError(error))
 
 try{
 
-const existingProfile = await new Promise(resolve=>{
-const unsubscribe = onValue(profileRef,snapshot=>{
+const existingProfile = await new Promise((resolve,reject)=>{
+
+let unsubscribe;
+
+unsubscribe = onValue(profileRef,snapshot=>{
 unsubscribe();
 resolve(snapshot.val());
+},error=>{
+if(unsubscribe) unsubscribe();
+reject(error);
 },{onlyOnce:true});
+
 });
 
 if(!existingProfile){
@@ -728,6 +947,7 @@ drawPeople();
 
 }catch(error){
 
+console.error(error);
 showError("profileError","Ошибка подключения: "+friendlyError(error));
 
 }
@@ -768,7 +988,7 @@ $("authPanel").classList.remove("hidden");
 
 
 window.addEventListener("unhandledrejection",event=>{
-console.error("Необработанная ошибка:",event.reason);
+  console.error("Необработанная ошибка:",event.reason);
 });
 
 </script>
