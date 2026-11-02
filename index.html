@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -15,7 +16,8 @@
 --text:#f1f5ff;
 --muted:#91a0bd;
 --border:#293653;
---green:#39df9a
+--green:#39df9a;
+--red:#ff647c
 }
 *{box-sizing:border-box}
 body{
@@ -41,6 +43,14 @@ color:white;font-weight:650
 .secondary{
 background:var(--panel2);color:white;
 border:1px solid var(--border)
+}
+.delete-btn{
+background:rgba(255,100,124,.12);
+color:#ff9da8;
+border:1px solid rgba(255,100,124,.3);
+padding:6px 10px;
+font-size:12px;
+margin-top:9px
 }
 .app{max-width:1100px;margin:auto;padding:18px}
 .panel{
@@ -100,8 +110,7 @@ font-size:11px;margin-bottom:4px
 display:block;
 max-width:240px;
 max-height:300px;
-width:auto;
-height:auto;
+width:auto;height:auto;
 object-fit:contain;
 border-radius:12px;
 margin-top:6px;
@@ -114,13 +123,9 @@ align-items:center
 }
 .composer input[type="text"]{flex:1}
 .photo-label{
-display:grid;
-place-items:center;
-cursor:pointer;
-min-width:46px;
-height:46px;
-font-size:22px;
-padding:8px
+display:grid;place-items:center;
+cursor:pointer;min-width:46px;height:46px;
+font-size:22px;padding:8px
 }
 #photoInput{display:none}
 .profile{
@@ -133,34 +138,22 @@ display:flex;gap:6px;flex-wrap:wrap;margin:10px 0
 font-size:23px;padding:6px;background:var(--panel2)
 }
 #photoPreview{
-max-width:120px;
-max-height:100px;
-border-radius:10px;
-margin-top:8px
+max-width:120px;max-height:100px;
+border-radius:10px;margin-top:8px
 }
 .photo-viewer{
-position:fixed;
-inset:0;
+position:fixed;inset:0;
 background:rgba(0,0,0,.92);
-z-index:1000;
-display:none;
-align-items:center;
-justify-content:center;
-padding:15px
+z-index:1000;display:none;
+align-items:center;justify-content:center;padding:15px
 }
 .photo-viewer.active{display:flex}
 .photo-viewer img{
-max-width:100%;
-max-height:90vh;
-object-fit:contain
+max-width:100%;max-height:90vh;object-fit:contain
 }
 .photo-viewer button{
-position:absolute;
-top:15px;
-right:15px;
-font-size:22px;
-background:#263759;
-color:white
+position:absolute;top:15px;right:15px;
+font-size:22px;background:#263759;color:white
 }
 @media(max-width:680px){
 .app{padding:10px}
@@ -178,7 +171,6 @@ color:white
 </head>
 
 <body>
-
 <div class="app">
 
 <section id="authPanel" class="panel auth">
@@ -195,7 +187,6 @@ color:white
 <button id="login" type="button" class="primary">Войти</button>
 <button id="register" type="button" class="secondary">Регистрация</button>
 </div>
-
 <div id="authError" class="error"></div>
 </section>
 
@@ -212,12 +203,10 @@ color:white
 <div class="layout">
 
 <aside class="panel">
-
 <h2>Профиль</h2>
 
 <div class="profile">
 <div id="myAvatar" class="avatar">🙂</div>
-
 <div style="min-width:0;flex:1">
 <input id="myName" maxlength="30" placeholder="Твоё имя">
 <div id="myEmail" class="muted" style="font-size:12px;margin-top:6px;overflow-wrap:anywhere"></div>
@@ -225,18 +214,15 @@ color:white
 </div>
 
 <div id="emojiPicker"></div>
-
 <button id="saveProfile" type="button" class="primary">Сохранить профиль</button>
 <div id="profileError" class="error"></div>
 
 <hr style="border-color:var(--border);margin:18px 0">
 
 <h2>Люди</h2>
-
 <div id="people" class="people">
 <p class="muted">Загрузка пользователей…</p>
 </div>
-
 </aside>
 
 <main class="panel chat">
@@ -256,31 +242,14 @@ color:white
 <div id="chatError" class="error"></div>
 
 <form id="composer" class="composer">
-
 <label for="photoInput" class="secondary photo-label" title="Отправить фотографию">📷</label>
-
-<input
-id="photoInput"
-type="file"
-accept="image/*"
->
-
-<input
-id="messageInput"
-type="text"
-maxlength="2000"
-autocomplete="off"
-placeholder="Напиши сообщение…"
->
-
+<input id="photoInput" type="file" accept="image/*">
+<input id="messageInput" type="text" maxlength="2000" autocomplete="off" placeholder="Напиши сообщение…">
 <button id="send" type="submit" class="primary">Отправить</button>
-
 </form>
 
 <img id="photoPreview" class="hidden" alt="Предпросмотр фотографии">
-
 </main>
-
 </div>
 </section>
 </div>
@@ -292,7 +261,7 @@ placeholder="Напиши сообщение…"
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
 import {
 getAuth,
@@ -310,7 +279,8 @@ query,
 orderBy,
 limit,
 onSnapshot,
-serverTimestamp
+serverTimestamp,
+deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 import {
@@ -458,7 +428,6 @@ setAuthButtons(false);
 }
 
 });
-
 
 $("password").addEventListener("keydown",event=>{
 if(event.key==="Enter") $("login").click();
@@ -620,9 +589,9 @@ stopMessages = onSnapshot(q,snapshot=>{
 const root = $("messages");
 root.replaceChildren();
 
-const docs = snapshot.docs.filter(doc=>{
+const docs = snapshot.docs.filter(messageDoc=>{
 
-const data = doc.data();
+const data = messageDoc.data();
 
 if(!uid) return !data.to;
 
@@ -642,9 +611,9 @@ root.appendChild(empty);
 
 }
 
-docs.forEach(doc=>{
+docs.forEach(messageDoc=>{
 
-const data = doc.data();
+const data = messageDoc.data();
 
 const item = document.createElement("div");
 item.className = "message"+(data.uid===currentUser.uid?" mine":"");
@@ -679,6 +648,53 @@ body.appendChild(img);
 }
 
 item.append(meta,body);
+
+
+/* DELETE MESSAGE FOR EVERYONE */
+
+if(data.uid === currentUser.uid){
+
+const deleteButton = document.createElement("button");
+
+deleteButton.type = "button";
+deleteButton.className = "delete-btn";
+deleteButton.textContent = "🗑 Удалить";
+
+deleteButton.addEventListener("click",async()=>{
+
+const approved = confirm(
+"Удалить это сообщение у всех участников чата?\n\nОтменить удаление будет нельзя."
+);
+
+if(!approved) return;
+
+deleteButton.disabled = true;
+deleteButton.textContent = "Удаляю...";
+
+try{
+
+await deleteDoc(messageDoc.ref);
+
+}catch(error){
+
+console.error("Ошибка удаления:",error);
+
+showError(
+"chatError",
+"Не удалось удалить сообщение: "+friendlyError(error)
+);
+
+deleteButton.disabled = false;
+deleteButton.textContent = "🗑 Удалить";
+
+}
+
+});
+
+item.appendChild(deleteButton);
+
+}
+
 root.appendChild(item);
 
 });
@@ -954,10 +970,9 @@ showError("profileError","Ошибка подключения: "+friendlyError(e
 
 openChat(null);
 
-}
+  }
 
-
-/* AUTH STATE */
+  /* AUTH STATE */
 
 onAuthStateChanged(auth,user=>{
 
@@ -988,7 +1003,7 @@ $("authPanel").classList.remove("hidden");
 
 
 window.addEventListener("unhandledrejection",event=>{
-  console.error("Необработанная ошибка:",event.reason);
+console.error("Необработанная ошибка:",event.reason);
 });
 
 </script>
