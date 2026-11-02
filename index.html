@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -150,7 +149,6 @@ font-size:22px;background:#263759;color:white
 }
 
 /* ADMIN PANEL */
-
 .admin-panel{
 margin-top:18px;padding-top:16px;
 border-top:1px solid var(--border)
@@ -191,6 +189,214 @@ border-radius:12px;padding:12px
 .top{align-items:flex-start}
 .composer{gap:5px}
 .composer button{padding:10px}
+}
+
+/* TELEGRAM-STYLE REDESIGN */
+:root{
+  --bg:#0e1621;
+  --panel:#17212b;
+  --panel2:#202b36;
+  --blue:#2b5278;
+  --text:#f5f7fa;
+  --muted:#8b9bab;
+  --border:#263442;
+  --green:#55c98a;
+  --red:#ff647c;
+}
+html,body{min-height:100%;background:#0e1621}
+body{
+  background:linear-gradient(135deg,#0e1621,#111d2a);
+  color:var(--text);
+  font-family:Roboto,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+}
+.app{
+  max-width:1240px;
+  min-height:100vh;
+  margin:0 auto;
+  padding:18px;
+}
+.panel{
+  background:#17212b;
+  border:1px solid #263442;
+  border-radius:14px;
+  padding:16px;
+  box-shadow:0 8px 28px rgba(0,0,0,.16);
+}
+.auth{max-width:420px;margin:8vh auto;padding:26px}
+.auth h1{font-size:26px;letter-spacing:.1px}
+.auth input{background:#0e1621;border-color:#344454}
+.top{
+  margin:0 0 14px;
+  padding:0 2px;
+  align-items:center;
+}
+.top h1{font-size:22px;margin:0 0 3px}
+.top .muted{font-size:13px}
+.layout{
+  grid-template-columns:310px minmax(0,1fr);
+  gap:0;
+  min-height:calc(100vh - 100px);
+  border:1px solid #263442;
+  border-radius:15px;
+  overflow:hidden;
+  background:#17212b;
+  box-shadow:0 12px 38px rgba(0,0,0,.2);
+}
+.layout>aside.panel{
+  border:0;
+  border-right:1px solid #263442;
+  border-radius:0;
+  padding:16px 12px;
+  box-shadow:none;
+  min-width:0;
+}
+.layout>main.panel{
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+}
+.layout aside h2{
+  font-size:15px;
+  font-weight:650;
+  margin:0 0 12px;
+}
+.profile{
+  background:#202b36;
+  padding:10px;
+  border-radius:12px;
+  margin-bottom:14px;
+}
+.profile input{background:#17212b;border-color:#344454}
+.avatar{
+  width:44px;height:44px;
+  background:#2b5278;
+  border:1px solid rgba(255,255,255,.07);
+}
+#emojiPicker{gap:4px;margin:9px 0}
+#emojiPicker button{border-radius:9px;background:#202b36}
+button{border-radius:10px;transition:background .15s ease,transform .15s ease}
+button:active{transform:scale(.98)}
+.primary{background:#2b5278;color:#fff}
+.primary:hover{background:#35658f}
+.secondary{background:#202b36;color:#e8eef5;border:1px solid #344454}
+.secondary:hover,.person:hover{background:#263746}
+.people{gap:4px}
+.person{
+  min-height:62px;
+  padding:9px 10px;
+  border:0;
+  border-radius:10px;
+  background:transparent;
+  color:#eaf0f6;
+}
+.person .avatar{width:43px;height:43px}
+.status{font-size:11px;color:#7fae9b}
+.chat{
+  min-height:calc(100vh - 100px);
+  padding:0 18px 14px;
+  background:#0e1621;
+}
+.chat-head{
+  min-height:70px;
+  margin:0 -18px;
+  padding:12px 18px;
+  border-bottom:1px solid #263442;
+  background:#17212b;
+}
+.chat-head h2{font-size:16px;font-weight:650}
+#chatSubtitle{font-size:12px}
+.messages{
+  min-height:250px;
+  max-height:none;
+  flex:1;
+  padding:20px 8px;
+  gap:8px;
+  background:
+    radial-gradient(circle at 20% 20%,rgba(65,100,125,.08) 0 2px,transparent 3px),
+    radial-gradient(circle at 80% 70%,rgba(65,100,125,.07) 0 2px,transparent 3px);
+  background-size:42px 42px,58px 58px;
+}
+.message{
+  max-width:min(78%,520px);
+  padding:8px 12px;
+  border-radius:12px 12px 12px 3px;
+  background:#182533;
+  border:1px solid rgba(255,255,255,.035);
+  line-height:1.4;
+  box-shadow:0 1px 1px rgba(0,0,0,.12);
+}
+.message.mine{
+  align-self:flex-end;
+  background:#2b5278;
+  border-radius:12px 12px 3px 12px;
+}
+.message small{
+  color:#a9bac9;
+  font-size:11px;
+  margin-bottom:4px;
+}
+.message.mine small{color:#c7dced}
+.message img{max-width:min(280px,100%)}
+.composer{
+  margin:0 -4px;
+  padding:12px 0 2px;
+  border-top:0;
+  gap:8px;
+}
+.composer input[type="text"]{
+  min-height:46px;
+  padding:12px 16px;
+  border-radius:24px;
+  background:#202b36;
+  border:1px solid #344454;
+}
+.composer .photo-label{
+  min-width:46px;height:46px;
+  border-radius:50%;
+}
+.composer button{min-height:44px;border-radius:22px}
+#photoPreview{margin:8px 0 0 50px}
+.error{font-size:13px}
+.admin-panel{border-top-color:#344454}
+.admin-user,.admin-stat{background:#202b36;border-color:#344454}
+hr{opacity:.7}
+.delete-btn{border-radius:8px}
+@media(max-width:680px){
+  .app{padding:0;min-height:100vh}
+  .top{padding:12px 14px;margin:0}
+  .layout{
+    display:flex;
+    flex-direction:column;
+    min-height:calc(100vh - 60px);
+    border-radius:0;
+    border-left:0;border-right:0;
+  }
+  .layout>aside.panel{
+    border-right:0;
+    border-bottom:1px solid #263442;
+    border-radius:0;
+    padding:12px;
+  }
+  .layout>main.panel{
+    min-height:58vh;
+    padding:0 12px 12px;
+  }
+  .people{
+    display:flex;
+    flex-direction:row;
+    overflow-x:auto;
+    padding-bottom:4px;
+  }
+  .person{flex:0 0 auto;min-width:125px;max-width:170px}
+  .person .avatar{width:36px;height:36px;font-size:19px}
+  .chat{min-height:58vh}
+  .messages{min-height:220px;max-height:48vh;padding:14px 2px}
+  .message{max-width:88%}
+  .chat-head{margin:0 -12px;padding:10px 12px}
+  .composer{gap:6px}
+  .composer button{padding:10px 12px;font-size:13px}
+  .composer input[type="text"]{min-width:0}
+  .photo-label{min-width:42px!important;width:42px;height:42px!important}
 }
 </style>
 </head>
@@ -248,8 +454,6 @@ border-radius:12px;padding:12px
 <div id="people" class="people">
 <p class="muted">Загрузка пользователей…</p>
 </div>
-
-<!-- ADMIN PANEL -->
 
 <section id="adminPanel" class="admin-panel hidden">
 
@@ -686,8 +890,7 @@ banButton.className = "secondary";
 banButton.textContent = banDoc.exists()
 ? "Разбанить"
 : "Заблокировать";
-
-banButton.addEventListener("click",async()=>{
+  banButton.addEventListener("click",async()=>{
 
 const banning = !banDoc.exists();
 
@@ -812,66 +1015,7 @@ await drawAdminPanel();
 $("adminRefresh").disabled = false;
 }
 });
-
-
-/* PEOPLE */
-
-function drawPeople(){
-
-const root = $("people");
-root.replaceChildren();
-
-const groupButton = document.createElement("button");
-groupButton.type = "button";
-groupButton.className = "person";
-groupButton.innerHTML = '<span class="avatar">🌐</span><span>Общий чат</span>';
-
-groupButton.addEventListener("click",()=>openChat(null));
-root.appendChild(groupButton);
-
-const others = Object.entries(profiles).filter(([uid])=>uid!==currentUser?.uid);
-
-if(!others.length){
-const empty = document.createElement("p");
-empty.className = "muted";
-empty.textContent = "Пока других пользователей нет.";
-root.appendChild(empty);
-}
-
-others.forEach(([uid,profile])=>{
-
-const button = document.createElement("button");
-button.type = "button";
-button.className = "person";
-
-const avatar = document.createElement("span");
-avatar.className = "avatar";
-avatar.textContent = profile.avatar || "🙂";
-
-const info = document.createElement("span");
-info.style.minWidth = "0";
-
-const name = document.createElement("span");
-name.textContent = profile.name || "Пользователь";
-
-const status = document.createElement("span");
-status.className = "status";
-status.style.display = "block";
-status.textContent = profile.online ? "В сети" : "Не в сети";
-
-info.append(name,status);
-button.append(avatar,info);
-
-button.addEventListener("click",()=>openChat(uid));
-
-root.appendChild(button);
-
-});
-
-}
-
-
-/* CHAT */
+  /* CHAT */
 
 function openChat(uid){
 
